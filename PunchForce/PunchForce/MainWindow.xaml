@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PunchForce"
         mc:Ignorable="d"
-        Title="报工助手" Height="350" Width="525">
-    <Grid>
-        <Button x:Name="button" Content="报工" Margin="207,258,0,0" Width="101" HorizontalAlignment="Left" VerticalAlignment="Top" Click="button_Click" Height="35" FontSize="16" FontWeight="Bold"/>
+        Title="报工助手" Height="236.957" Width="396.739" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <Grid Margin="0,0,0,2">
+        <Label x:Name="label" Content="在文本框中输入姓名，点击报工"  HorizontalAlignment="Left" Height="30" Margin="115,8,0,0" VerticalAlignment="Top" Width="181"/>
+        <Button x:Name="button" Content="Submit" HorizontalAlignment="Left" Height="33" Margin="132,128,0,0" VerticalAlignment="Top" Width="140" FontSize="20" FontFamily="Sitka Text" Click="button_Click"/>
+        <TextBox x:Name="nameTextBox" HorizontalAlignment="Left" Height="50" Margin="106,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" BorderThickness="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" FontFamily="Segoe Print"/>
     </Grid>
 </Window>
