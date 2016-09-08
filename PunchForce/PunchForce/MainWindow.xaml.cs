@@ -40,7 +40,43 @@ namespace PunchForce
             paramList.Add(new KeyValuePair<string, string>("_p1", "21218CCA77804D2BA1922C33E0151105"));
             HttpResponseMessage response = httpClient.PostAsync(new Uri(loginUrl), new FormUrlEncodedContent(paramList)).Result;
             String result = response.Content.ReadAsStringAsync().Result;
+            String base64Name = getBase64Name(username, httpClient);
+            emp emp = getPasswdAndId(username,httpClient);
+            emp.EmpName = username;
+
+            Console.WriteLine();
+        }
+
+        public String getBase64Name(String username, HttpClient httpClient)
+        {
+            String Base64URL = "http://123.232.10.234:8083/servlet/com.sdjxd.pms.platform.serviceBreak.Invoke";
+            List<KeyValuePair<String, String>> paramList = new List<KeyValuePair<String, String>>();
+            paramList.Add(new KeyValuePair<string, string>("_c", "com.sdjxd.pms.platform.tool.Base64"));
+            paramList.Add(new KeyValuePair<string, string>("_m", "encode"));
+            paramList.Add(new KeyValuePair<string, string>("_p0", username));
+            HttpResponseMessage response = httpClient.PostAsync(new Uri(Base64URL), new FormUrlEncodedContent(paramList)).Result;
+            String result = response.Content.ReadAsStringAsync().Result;
+
+            return username;
+
+        }
+        public emp getPasswdAndId(String username,HttpClient httpClient)
+        {
+            emp emp = new emp();
+            String sqlurl = "http://123.232.10.234:8083/servlet/com.sdjxd.pms.platform.serviceBreak.Invoke?p=6962531A-0F5E-43E9-84ED-185AE9A93CFE";
+            List<KeyValuePair<String, String>> paramList = new List<KeyValuePair<String, String>>();
+            paramList.Add(new KeyValuePair<string, string>("_c", "com.sdjxd.pms.platform.form.service.cell.ComboBox"));
+            paramList.Add(new KeyValuePair<string, string>("_m", "refresh"));
+            paramList.Add(new KeyValuePair<string, string>("_p0", "\"defaultds\""));
+            paramList.Add(new KeyValuePair<string, string>("_p1", "\"[\"2\",[\"JXD7_XT_USER\",\"USERID\",\"PASSWD\",\" WHERE 1=1 AND USERNAME = '" + username + "'\",\" ORDER BY USERID\"],\"0\",\"0\",\"0\",\"1\"]\""));
+            paramList.Add(new KeyValuePair<string, string>("_p2", "\"6962531A-0F5E-43E9-84ED-185AE9A93CFE\""));
+            paramList.Add(new KeyValuePair<string, string>("_p3", "77"));
+            HttpResponseMessage response = httpClient.PostAsync(new Uri(sqlurl), new FormUrlEncodedContent(paramList)).Result;
+            String result = response.Content.ReadAsStringAsync().Result;
+            //string[] str = result.Split("JSClass.extend([\"");
+
             Console.WriteLine(result);
+            return emp;
         }
     }
 }
