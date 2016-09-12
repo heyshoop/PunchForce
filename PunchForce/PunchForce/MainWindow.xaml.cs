@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 
 namespace PunchForce
 {
@@ -29,24 +30,34 @@ namespace PunchForce
         private void button_Click(object sender, RoutedEventArgs e)
         {
             String username = nameTextBox.Text.ToString();
+            HttpClient httpClientBase = login("yL3P/tHg", "21218CCA77804D2BA1922C33E0151105");
+            String base64Name = getBase64Name(username, httpClientBase);
+            emp emp = getPasswdAndId(username, httpClientBase);
+            emp.EmpName = username;
+            emp.Bs64Name = base64Name;
+
+
+
+
+            Console.WriteLine();
+        }
+        //登录获取httpclient
+        public HttpClient login(String username,String password)
+        {
             HttpClient httpClient = new HttpClient();
             httpClient.MaxResponseContentBufferSize = 256000;
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:48.0) Gecko/20100101 Firefox/48.0");
             String loginUrl = "http://123.232.10.234:8083/servlet/com.sdjxd.pms.platform.serviceBreak.Invoke";
             List<KeyValuePair<String, String>> paramList = new List<KeyValuePair<String, String>>();
-            paramList.Add(new KeyValuePair<string, string>("_c","com.sdjxd.pms.platform.organize.User"));
+            paramList.Add(new KeyValuePair<string, string>("_c", "com.sdjxd.pms.platform.organize.User"));
             paramList.Add(new KeyValuePair<string, string>("_m", "loginByEncode"));
-            paramList.Add(new KeyValuePair<string, string>("_p0", "yL3P/tHg"));
-            paramList.Add(new KeyValuePair<string, string>("_p1", "21218CCA77804D2BA1922C33E0151105"));
+            paramList.Add(new KeyValuePair<string, string>("_p0", username));
+            paramList.Add(new KeyValuePair<string, string>("_p1", password));
             HttpResponseMessage response = httpClient.PostAsync(new Uri(loginUrl), new FormUrlEncodedContent(paramList)).Result;
             String result = response.Content.ReadAsStringAsync().Result;
-            String base64Name = getBase64Name(username, httpClient);
-            emp emp = getPasswdAndId(username,httpClient);
-            emp.EmpName = username;
-
-            Console.WriteLine();
+            return httpClient;
         }
-
+        //获取加密名字
         public String getBase64Name(String username, HttpClient httpClient)
         {
             String Base64URL = "http://123.232.10.234:8083/servlet/com.sdjxd.pms.platform.serviceBreak.Invoke";
@@ -56,10 +67,15 @@ namespace PunchForce
             paramList.Add(new KeyValuePair<string, string>("_p0", username));
             HttpResponseMessage response = httpClient.PostAsync(new Uri(Base64URL), new FormUrlEncodedContent(paramList)).Result;
             String result = response.Content.ReadAsStringAsync().Result;
-
-            return username;
+            Regex regex = new Regex("\"value\":\"");
+            String[] str = regex.Split(result);
+            if (str.Length < 2) return null;
+            Regex regex64 = new Regex("\"},\"com");
+            String[] base64Name = regex64.Split(str[1]);
+            return base64Name[0];
 
         }
+        //获取ID密码
         public emp getPasswdAndId(String username,HttpClient httpClient)
         {
             emp emp = new emp();
@@ -73,10 +89,31 @@ namespace PunchForce
             paramList.Add(new KeyValuePair<string, string>("_p3", "77"));
             HttpResponseMessage response = httpClient.PostAsync(new Uri(sqlurl), new FormUrlEncodedContent(paramList)).Result;
             String result = response.Content.ReadAsStringAsync().Result;
-            //string[] str = result.Split("JSClass.extend([\"");
-
-            Console.WriteLine(result);
+            Regex regex = new Regex("JSClass.extend\\(\\[\"");
+            String[] str = regex.Split(result);
+            if (str.Length < 3) return null;
+            Regex regexId = new Regex("\"],\"");
+            String[] objectId = regexId.Split(str[1]);
+            String[] password = regexId.Split(str[2]);
+            emp.ObjectId = objectId[0];
+            emp.Passwd = password[0];
+            Console.WriteLine("ObjectId:"+ objectId[0]);
+            Console.WriteLine("Passwd:" + password[0]);
             return emp;
+        }
+        //封装报工实体
+        public job getJobDate(HttpClient httpClient)
+        {
+            job job = new job();
+            var sheetId = Guid.NewGuid().ToString();
+            job.SheetId = sheetId;
+            DateTime dt = System.DateTime.Now;
+            String date = dt.ToString("yyyy-MM-dd");
+            String datejq = dt.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+
+            return job;
         }
     }
 }

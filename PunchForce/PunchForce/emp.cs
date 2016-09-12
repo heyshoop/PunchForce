@@ -9,6 +9,7 @@ namespace PunchForce
     public class emp
     {
         private String empName;
+        private String bs64Name;
         private String objectId;
         private String passwd;
 
@@ -48,6 +49,19 @@ namespace PunchForce
             set
             {
                 passwd = value;
+            }
+        }
+
+        public string Bs64Name
+        {
+            get
+            {
+                return bs64Name;
+            }
+
+            set
+            {
+                bs64Name = value;
             }
         }
     }
