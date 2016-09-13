@@ -105,12 +105,19 @@ namespace PunchForce
         public job getJobDate(HttpClient httpClient)
         {
             job job = new job();
+            String joburl = "http://123.232.10.234:8083/servlet/com.sdjxd.pms.platform.serviceBreak.Invoke?p=6962531A-0F5E-43E9-84ED-185AE9A93CFE";
             var sheetId = Guid.NewGuid().ToString();
             job.SheetId = sheetId;
             DateTime dt = System.DateTime.Now;
             String date = dt.ToString("yyyy-MM-dd");
             String datejq = dt.ToString("yyyy-MM-dd HH:mm:ss");
-
+            job.Data = date;
+            job.Datajq = date;
+            List<KeyValuePair<String, String>> paramList = new List<KeyValuePair<String, String>>();
+            paramList.Add(new KeyValuePair<string, string>("_c", "bgxt.BgxtPc"));
+            paramList.Add(new KeyValuePair<string, string>("_m", "getData"));
+            HttpResponseMessage response = httpClient.PostAsync(new Uri(joburl), new FormUrlEncodedContent(paramList)).Result;
+            String result = response.Content.ReadAsStringAsync().Result;
 
 
             return job;
