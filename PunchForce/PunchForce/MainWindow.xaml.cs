@@ -35,11 +35,13 @@ namespace PunchForce
             emp emp = getPasswdAndId(username, httpClientBase);
             emp.EmpName = username;
             emp.Bs64Name = base64Name;
+            HttpClient httpClient = login(emp.Bs64Name, emp.Passwd);
+            job job = getJobDate(httpClient);
 
 
 
 
-            Console.WriteLine();
+            Console.WriteLine(job.Project);
         }
         //登录获取httpclient
         public HttpClient login(String username,String password)
@@ -118,9 +120,39 @@ namespace PunchForce
             paramList.Add(new KeyValuePair<string, string>("_m", "getData"));
             HttpResponseMessage response = httpClient.PostAsync(new Uri(joburl), new FormUrlEncodedContent(paramList)).Result;
             String result = response.Content.ReadAsStringAsync().Result;
-
+            String[] str1 = new Regex("JSClass.extend\\(\\[").Split(result);
+            if (str1.Length < 2) return null;
+            String[] str2 = new Regex("],\"").Split(str1[1]);
+            if (str2.Length < 2) return null;
+            String[] jobstr = new Regex(",").Split(str2[0]);
+            if (jobstr.Length > 0)
+            {
+                job.Place = jobstr[0].Replace("\"", "");
+                job.Project = jobstr[1].Replace("\"", "");
+                job.Quarter = jobstr[2].Replace("\"", "");
+                job.Desc = jobstr[3].Replace("\"", "");
+                job.PlaceId = jobstr[4].Replace("\"", "");
+                job.ProjectId = jobstr[5].Replace("\"", "");
+                job.QuarterId = jobstr[6].Replace("\"", "");
+                job.Bgrq = jobstr[7].Replace("\"", "");
+                job.PcType = jobstr[8].Replace("\"", "");
+                job.WorkType = jobstr[9].Replace("\"", "");
+            }
 
             return job;
+        }
+        //拼接注入SQL
+        public String getJobSql(emp emp,job job)
+        {
+            StringBuilder sql = new StringBuilder();
+
+
+            return sql.ToString();
+        }
+        //注入报工
+        public void injectJobData()
+        {
+
         }
     }
 }
