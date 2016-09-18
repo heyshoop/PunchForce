@@ -31,15 +31,20 @@ namespace PunchForce
         {
             String username = nameTextBox.Text.ToString();
             HttpClient httpClientBase = login("yL3P/tHg", "21218CCA77804D2BA1922C33E0151105");
-            String base64Name = getBase64Name(username, httpClientBase);
-            emp emp = getPasswdAndId(username, httpClientBase);
-            emp.EmpName = username;
-            emp.Bs64Name = base64Name;
-            HttpClient httpClient = login(emp.Bs64Name, emp.Passwd);
-            job job = getJobDate(httpClient);
-            String jobSql = getJobSql(emp,job);
-            String response = injectJobData(httpClient,jobSql);
-            MessageBox.Show("强制"+emp.EmpName+"报工成功！");
+            try {
+                String base64Name = getBase64Name(username, httpClientBase);
+                emp emp = getPasswdAndId(username, httpClientBase);
+                emp.EmpName = username;
+                emp.Bs64Name = base64Name;
+                HttpClient httpClient = login(emp.Bs64Name, emp.Passwd);
+                job job = getJobDate(httpClient);
+                String jobSql = getJobSql(emp, job);
+                String response = injectJobData(httpClient, jobSql);
+                MessageBox.Show("强制" + job.DeptName+username + "报工成功！");
+            }
+            catch (Exception exception) {
+                MessageBox.Show("报工失败：名字有误/或已冻结！");
+            }
         }
         //登录获取httpclient
         public HttpClient login(String username,String password)
