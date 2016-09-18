@@ -33,6 +33,11 @@ namespace PunchForce
             HttpClient httpClientBase = login("yL3P/tHg", "21218CCA77804D2BA1922C33E0151105");
             try {
                 String base64Name = getBase64Name(username, httpClientBase);
+                if (base64Name.Equals("s8K8yraw"))
+                {
+                    MessageBox.Show("放下那只鼠标让本宝宝自己来~");
+                    return;
+                }
                 emp emp = getPasswdAndId(username, httpClientBase);
                 emp.EmpName = username;
                 emp.Bs64Name = base64Name;
@@ -43,7 +48,7 @@ namespace PunchForce
                 MessageBox.Show("强制" + job.DeptName+username + "报工成功！");
             }
             catch (Exception exception) {
-                MessageBox.Show("报工失败：名字有误/或已冻结！");
+                MessageBox.Show("报工失败：名字有误OR已冻结OR LEADER！");
             }
         }
         //登录获取httpclient
