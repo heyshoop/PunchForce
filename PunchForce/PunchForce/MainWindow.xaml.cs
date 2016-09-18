@@ -45,7 +45,7 @@ namespace PunchForce
                 job job = getJobDate(httpClient);
                 String jobSql = getJobSql(emp, job);
                 String response = injectJobData(httpClient, jobSql);
-                MessageBox.Show("强制" + job.DeptName+username + "报工成功！");
+                MessageBox.Show("强制" + job.Project+"项目组"+username + "报工成功！");
             }
             catch (Exception exception) {
                 MessageBox.Show("报工失败：名字有误OR已冻结OR LEADER！");
