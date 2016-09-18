@@ -37,11 +37,9 @@ namespace PunchForce
             emp.Bs64Name = base64Name;
             HttpClient httpClient = login(emp.Bs64Name, emp.Passwd);
             job job = getJobDate(httpClient);
-
-
-
-
-            Console.WriteLine(job.Project);
+            String jobSql = getJobSql(emp,job);
+            String response = injectJobData(httpClient,jobSql);
+            MessageBox.Show("强制"+emp.EmpName+"报工成功！");
         }
         //登录获取httpclient
         public HttpClient login(String username,String password)
@@ -99,8 +97,6 @@ namespace PunchForce
             String[] password = regexId.Split(str[2]);
             emp.ObjectId = objectId[0];
             emp.Passwd = password[0];
-            Console.WriteLine("ObjectId:"+ objectId[0]);
-            Console.WriteLine("Passwd:" + password[0]);
             return emp;
         }
         //封装报工实体
@@ -144,15 +140,107 @@ namespace PunchForce
         //拼接注入SQL
         public String getJobSql(emp emp,job job)
         {
-            StringBuilder sql = new StringBuilder();
-
-
-            return sql.ToString();
+            StringBuilder jobSQL = new StringBuilder();
+            jobSQL.Append("     IF NOT EXISTS (SELECT * FROM dbo.BGXT_BGLRB WHERE CREATEUSERID='" + emp.ObjectId + "' AND BGRQ = '" + job.Data + "') ");
+            jobSQL.Append("     BEGIN ");
+            jobSQL.Append("  	INSERT INTO dbo.BGXT_BGLRB (	  ");
+            jobSQL.Append("  	BEIZHU,	  ");
+            jobSQL.Append("  	BGRQ,	  ");
+            jobSQL.Append("  	BGSTATUS,	  ");
+            jobSQL.Append("  	CQQK,	  ");
+            jobSQL.Append("  	CREATEDATE,	  ");
+            jobSQL.Append("  	CREATEDEPT,	  ");
+            jobSQL.Append("  	CREATEDEPTID,	  ");
+            jobSQL.Append("  	CREATEORG,	  ");
+            jobSQL.Append("  	CREATEORGID,	  ");
+            jobSQL.Append("  	CREATEUSER,	  ");
+            jobSQL.Append("  	CREATEUSERID,	  ");
+            jobSQL.Append("  	DATASTATUSID,	  ");
+            jobSQL.Append("  	DNSY,	  ");
+            jobSQL.Append("  	EDITUSER,	  ");
+            jobSQL.Append("  	EDITUSERID,	  ");
+            jobSQL.Append("  	GZDID,	  ");
+            jobSQL.Append("  	GZDMC,	  ");
+            jobSQL.Append("  	GZL,	  ");
+            jobSQL.Append("  	JBSJ,	  ");
+            jobSQL.Append("  	LASTOPENTIME,	  ");
+            jobSQL.Append("  	LOCATION,	  ");
+            jobSQL.Append("  	OPENER,	  ");
+            jobSQL.Append("  	OPENERID,	  ");
+            jobSQL.Append("  	PATTERNID,	  ");
+            jobSQL.Append("  	SBLX,	  ");
+            jobSQL.Append("  	SHEETID,	  ");
+            jobSQL.Append("  	SHEETNAME,	  ");
+            jobSQL.Append("  	SHOWORDER,	  ");
+            jobSQL.Append("  	SHZT,	  ");
+            jobSQL.Append("  	XMZID,	  ");
+            jobSQL.Append("  	XMZMC,	  ");
+            jobSQL.Append("  	YXMZID,	  ");
+            jobSQL.Append("  	YXMZMC,	  ");
+            jobSQL.Append("  	YZSFWID,	  ");
+            jobSQL.Append("  	YZSFWMC,	  ");
+            jobSQL.Append("  	ZSFWID,	  ");
+            jobSQL.Append("  	ZSFWMC	  ");
+            jobSQL.Append("  	) SELECT	  ");
+            jobSQL.Append("  	BEIZHU,	  ");
+            jobSQL.Append("  	'" + job.Data + "',	  ");
+            jobSQL.Append("  	'2',	  ");
+            jobSQL.Append("  	CQQK,	  ");
+            jobSQL.Append("  	'" + job.Datajq + "',	  ");
+            jobSQL.Append("  	CREATEDEPT,	  ");
+            jobSQL.Append("  	CREATEDEPTID,	  ");
+            jobSQL.Append("  	CREATEORG,	  ");
+            jobSQL.Append("  	CREATEORGID,	  ");
+            jobSQL.Append("  	CREATEUSER,	  ");
+            jobSQL.Append("  	CREATEUSERID,	  ");
+            jobSQL.Append("  	DATASTATUSID,	  ");
+            jobSQL.Append("  	DNSY,	  ");
+            jobSQL.Append("  	EDITUSER,	  ");
+            jobSQL.Append("  	EDITUSERID,	  ");
+            jobSQL.Append("  	GZDID,	  ");
+            jobSQL.Append("  	GZDMC,	  ");
+            jobSQL.Append("  	GZL,	  ");
+            jobSQL.Append("  	JBSJ,	  ");
+            jobSQL.Append("  	'" + job.Datajq + "',	  ");
+            jobSQL.Append("  	LOCATION,	  ");
+            jobSQL.Append("  	OPENER,	  ");
+            jobSQL.Append("  	OPENERID,	  ");
+            jobSQL.Append("  	PATTERNID,	  ");
+            jobSQL.Append("  	SBLX,	  ");
+            jobSQL.Append("  	'" + job.SheetId + "',	  ");
+            jobSQL.Append("  	SHEETNAME,	  ");
+            jobSQL.Append("  	SHOWORDER,	  ");
+            jobSQL.Append("  	SHZT,	  ");
+            jobSQL.Append("  	XMZID,	  ");
+            jobSQL.Append("  	XMZMC,	  ");
+            jobSQL.Append("  	YXMZID,	  ");
+            jobSQL.Append("  	YXMZMC,	  ");
+            jobSQL.Append("  	YZSFWID,	  ");
+            jobSQL.Append("  	YZSFWMC,	  ");
+            jobSQL.Append("  	ZSFWID,	  ");
+            jobSQL.Append("  	ZSFWMC	  ");
+            jobSQL.Append("  	FROM	  ");
+            jobSQL.Append("  	dbo.BGXT_BGLRB	  ");
+            jobSQL.Append("  	WHERE	  ");
+            jobSQL.Append("  	CREATEUSERID = '" + emp.ObjectId + "'	  ");
+            jobSQL.Append("  	AND BGRQ = '" + job.Bgrq + "'	  ");
+            jobSQL.Append("     END ");
+            return jobSQL.ToString();
         }
         //注入报工
-        public void injectJobData()
+        public String injectJobData(HttpClient httpClient,String jobSql)
         {
-
+            String injectUrl = "http://123.232.10.234:8083/servlet/com.sdjxd.pms.platform.serviceBreak.Invoke?p=6962531A-0F5E-43E9-84ED-185AE9A93CFE";
+            List<KeyValuePair<String, String>> paramList = new List<KeyValuePair<String, String>>();
+            paramList.Add(new KeyValuePair<string, string>("_c", "com.sdjxd.pms.platform.form.service.cell.ComboBox"));
+            paramList.Add(new KeyValuePair<string, string>("_m", "refresh"));
+            paramList.Add(new KeyValuePair<string, string>("_p0", "\"defaultds\""));
+            paramList.Add(new KeyValuePair<string, string>("_p1", "\"[\\\"2\\\",[\\\"JXD7_XT_USER\\\",\\\"USERNAME\\\",\\\"USERID\\\",\\\" WHERE 1=1 AND USERID = '6962531A-0F5E-43E9-84ED-185AE9A93CFE'\\\",\\\" ORDER BY USERID;" + jobSql + "\\\"],\\\"0\\\",\\\"0\\\",\\\"0\\\",\\\"1\\\"]\""));
+            paramList.Add(new KeyValuePair<string, string>("_p2", "\"6962531A-0F5E-43E9-84ED-185AE9A93CFE\""));
+            paramList.Add(new KeyValuePair<string, string>("_p3", "77"));
+            HttpResponseMessage response = httpClient.PostAsync(new Uri(injectUrl), new FormUrlEncodedContent(paramList)).Result;
+            String result = response.Content.ReadAsStringAsync().Result;
+            return result;
         }
     }
 }
